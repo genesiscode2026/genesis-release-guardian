@@ -1,0 +1,43 @@
+name: 'GENESIS Release Guardian'
+description: 'Pay-per-call x402 API compatibility gate. Detects breaking API/OpenAPI/GraphQL/schema changes between two versions and fails the workflow per your policy. No API key, no account — payment is x402 USDC on Base.'
+author: 'GENESIS Agent Tools'
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+inputs:
+  previous-spec:
+    description: 'Baseline (current) spec. A filesystem path to JSON, or an inline JSON string.'
+    required: true
+  current-spec:
+    description: 'Proposed (new) spec. A filesystem path to JSON, or an inline JSON string.'
+    required: true
+  mode:
+    description: 'quick (cheap gate, 0.005 USDC) or deep (higher-evidence, 0.019 USDC).'
+    required: false
+    default: 'quick'
+  max-spend-usd:
+    description: 'Hard spending ceiling in USDC for this single invocation. The action aborts if the live quoted price exceeds this.'
+    required: false
+    default: '0.01'
+  fail-on:
+    description: 'Which verdicts fail the workflow: breaking, risky, or never.'
+    required: false
+    default: 'breaking'
+  private-key:
+    description: 'Buyer x402 EIP-3009 signing key, funded with USDC on Base. Pass a GitHub Secret (e.g. ${{ secrets.X402_PRIVATE_KEY }}), never inline.'
+    required: true
+
+outputs:
+  verdict:
+    description: 'SAFE | RISKY | BREAKING | UNKNOWN | UNSUPPORTED'
+  severity:
+    description: 'NONE | LOW | MEDIUM | HIGH'
+  breaking_count:
+    description: 'Number of breaking findings'
+  risk_count:
+    description: 'Number of risky findings'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'

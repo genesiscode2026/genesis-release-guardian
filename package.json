@@ -1,0 +1,18 @@
+{
+  "name": "genesis-release-guardian-action",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "GENESIS Release Guardian GitHub Action — pay-per-call x402 API compatibility gate.",
+  "scripts": {
+    "build": "ncc build src/index.js -o dist --license licenses.txt"
+  },
+  "dependencies": {
+    "@x402/evm": "2.26.0",
+    "@x402/fetch": "2.26.0",
+    "viem": "2.56.8"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "0.45.0"
+  }
+}
