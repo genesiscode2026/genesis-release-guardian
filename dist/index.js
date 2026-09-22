@@ -43899,7 +43899,7 @@ const USDC_DECIMALS = 1e6;
 const MODE_PRICE_USD = { quick: 0.005, deep: 0.019 };
 
 function getInput(name) {
-  return (process.env['INPUT_' + name.toUpperCase().replace(/-/g, '_')] || '').trim();
+  return (process.env['INPUT_' + name.toUpperCase()] || '').trim();
 }
 function setOutput(name, value) {
   const f = process.env.GITHUB_OUTPUT;

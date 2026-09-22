@@ -21,7 +21,7 @@ const USDC_DECIMALS = 1e6;
 const MODE_PRICE_USD = { quick: 0.005, deep: 0.019 };
 
 function getInput(name) {
-  return (process.env['INPUT_' + name.toUpperCase().replace(/-/g, '_')] || '').trim();
+  return (process.env['INPUT_' + name.toUpperCase()] || '').trim();
 }
 function setOutput(name, value) {
   const f = process.env.GITHUB_OUTPUT;
@@ -53,7 +53,6 @@ async function main() {
   const mode = (getInput('mode') || 'quick').toLowerCase();
   if (mode !== 'quick' && mode !== 'deep') fail(`mode must be "quick" or "deep", got "${mode}"`);
   const dryRun = (getInput('dry-run') || 'false').toLowerCase() === 'true';
-  console.log(`[debug] mode=${mode} dryRun=${dryRun}`);
   const privateKey = getInput('private-key');
   if (!privateKey && !dryRun) fail('private-key is required (pass a GitHub Secret, never inline)');
   if (privateKey) mask(privateKey); // mask in the workflow log before anything else
