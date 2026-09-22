@@ -50,12 +50,13 @@ function loadSpec(raw, name) {
 }
 
 async function main() {
-  const privateKey = getInput('private-key');
-  if (!privateKey) fail('private-key is required (pass a GitHub Secret, never inline)');
-  mask(privateKey); // mask in the workflow log before anything else
-
   const mode = (getInput('mode') || 'quick').toLowerCase();
   if (mode !== 'quick' && mode !== 'deep') fail(`mode must be "quick" or "deep", got "${mode}"`);
+  const dryRun = (getInput('dry-run') || 'false').toLowerCase() === 'true';
+  const privateKey = getInput('private-key');
+  if (!privateKey && !dryRun) fail('private-key is required (pass a GitHub Secret, never inline)');
+  if (privateKey) mask(privateKey); // mask in the workflow log before anything else
+
   const failOn = (getInput('fail-on') || 'breaking').toLowerCase();
   if (!['breaking', 'risky', 'never'].includes(failOn)) fail(`fail-on must be breaking|risky|never`);
   const maxSpend = Number(getInput('max-spend-usd') || '0.01');
@@ -83,6 +84,15 @@ async function main() {
   if (amountUsd > maxSpend) fail(`quoted ${amountUsd} USDC exceeds max-spend-usd ${maxSpend}; aborting before payment`);
   if (amountUsd > (MODE_PRICE_USD[mode] || 0) * 1.5) warn(`quoted ${amountUsd} USDC is higher than the published ${MODE_PRICE_USD[mode]} USDC for "${mode}"`);
   console.log(`Release Guardian (${mode}) quoted ${amountUsd} USDC — within ceiling ${maxSpend}`);
+
+  if (dryRun) {
+    console.log(`DRY RUN: skipping payment. Would pay ${amountUsd} USDC to the canonical Exodus payout.`);
+    setOutput('verdict', 'DRY_RUN');
+    setOutput('severity', 'NONE');
+    setOutput('breaking_count', 0);
+    setOutput('risk_count', 0);
+    return;
+  }
 
   // 2) Paid call. The x402 client signs the EIP-3009 authorization and retries
   //    with the PAYMENT-SIGNATURE header automatically.
