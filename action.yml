@@ -29,7 +29,7 @@ inputs:
     required: false
     default: 'false'
   private-key:
-    description: 'Buyer x402 EIP-3009 signing key, funded with USDC on Base. Pass a GitHub Secret (e.g. ${{ secrets.X402_PRIVATE_KEY }}), never inline.'
+    description: 'Buyer x402 EIP-3009 signing key, funded with USDC on Base. Pass a GitHub Secret (e.g. secrets.X402_PRIVATE_KEY), never inline.'
     required: true
 
 outputs:
