@@ -35,7 +35,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Check API for breaking changes
         id: guard
-        uses: genesiscode2026/genesis-agent-tools/release-guardian@v1
+        uses: genesiscode2026/genesis-release-guardian@v1
         with:
           previous-spec: spec/openapi.baseline.json
           current-spec: spec/openapi.json
