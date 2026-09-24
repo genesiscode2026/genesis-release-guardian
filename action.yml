@@ -1,5 +1,5 @@
 name: 'GENESIS Release Guardian'
-description: 'Pay-per-call x402 API compatibility gate. Detects breaking API/OpenAPI/GraphQL/schema changes between two versions and fails the workflow per your policy. No API key, no account — payment is x402 USDC on Base.'
+description: 'Detect breaking API, OpenAPI, GraphQL, and schema changes in CI with an x402 pay-per-call compatibility gate.'
 author: 'GENESIS Agent Tools'
 branding:
   icon: 'shield'
