@@ -13,13 +13,13 @@ inputs:
     description: 'Proposed (new) spec. A filesystem path to JSON, or an inline JSON string.'
     required: true
   mode:
-    description: 'quick (cheap gate, 0.005 USDC) or deep (higher-evidence, 0.019 USDC).'
+    description: 'quick (cross-contract gate, 0.001 USDC) or deep (higher-evidence, 0.019 USDC).'
     required: false
     default: 'quick'
   max-spend-usd:
     description: 'Hard spending ceiling in USDC for this single invocation. The action aborts if the live quoted price exceeds this.'
     required: false
-    default: '0.01'
+    default: '0.001'
   fail-on:
     description: 'Which verdicts fail the workflow: breaking, risky, or never.'
     required: false

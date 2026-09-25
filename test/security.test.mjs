@@ -41,6 +41,13 @@ test('spending ceiling is enforced against the live challenge amount', () => {
   assert.match(src, /aborting before payment/, 'aborts before signing');
 });
 
+test('published prices and the default ceiling match the live acquisition offer', () => {
+  assert.match(src, /quick:\s*0\.001/);
+  assert.match(src, /deep:\s*0\.019/);
+  assert.match(action, /default:\s*'0\.001'/);
+  assert.match(src, /amountUsd\s*>\s*publishedPrice/);
+});
+
 test('no @actions/* dependency (avoids vulnerable undici chain)', () => {
   const deps = { ...pkg.dependencies, ...pkg.devDependencies };
   assert.ok(!Object.keys(deps).some((d) => d.startsWith('@actions/')), 'no @actions/* deps');

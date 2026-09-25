@@ -43896,7 +43896,7 @@ const ORIGIN = 'https://genesis-agent-tools.genesisagenttools.workers.dev';
 const ENDPOINT = ORIGIN + '/api/flagships/release-guardian';
 const BASE_RPC = 'https://mainnet.base.org';
 const USDC_DECIMALS = 1e6;
-const MODE_PRICE_USD = { quick: 0.005, deep: 0.019 };
+const MODE_PRICE_USD = { quick: 0.001, deep: 0.019 };
 
 function getInput(name) {
   return (process.env['INPUT_' + name.toUpperCase()] || '').trim();
@@ -43937,7 +43937,8 @@ async function main() {
 
   const failOn = (getInput('fail-on') || 'breaking').toLowerCase();
   if (!['breaking', 'risky', 'never'].includes(failOn)) fail(`fail-on must be breaking|risky|never`);
-  const maxSpend = Number(getInput('max-spend-usd') || '0.01');
+  const publishedPrice = MODE_PRICE_USD[mode];
+  const maxSpend = Number(getInput('max-spend-usd') || String(publishedPrice));
   if (!(maxSpend >= 0)) fail('max-spend-usd must be a non-negative number');
 
   const previous = loadSpec(getInput('previous-spec'), 'previous-spec');
@@ -43960,7 +43961,7 @@ async function main() {
   const amountUsd = Number(accepts[0]?.amount) / USDC_DECIMALS;
   if (!Number.isFinite(amountUsd) || amountUsd <= 0) fail('challenge did not carry a parseable USDC amount');
   if (amountUsd > maxSpend) fail(`quoted ${amountUsd} USDC exceeds max-spend-usd ${maxSpend}; aborting before payment`);
-  if (amountUsd > (MODE_PRICE_USD[mode] || 0) * 1.5) warn(`quoted ${amountUsd} USDC is higher than the published ${MODE_PRICE_USD[mode]} USDC for "${mode}"`);
+  if (amountUsd > publishedPrice) fail(`quoted ${amountUsd} USDC exceeds the published ${publishedPrice} USDC price for "${mode}"; aborting before payment`);
   console.log(`Release Guardian (${mode}) quoted ${amountUsd} USDC — within ceiling ${maxSpend}`);
 
   if (dryRun) {
@@ -44001,5 +44002,4 @@ async function main() {
 }
 
 main().catch((e) => fail(`Release Guardian action error: ${e?.message || e}`));
-
 

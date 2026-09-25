@@ -1,9 +1,9 @@
 # GENESIS Release Guardian — GitHub Action
 
-A minimal, pay-per-call **x402** compatibility gate for CI. It calls the live
-GENESIS Release Guardian API to detect breaking API / OpenAPI / GraphQL / schema
-changes between two versions, then passes or fails your workflow per a policy
-you configure.
+A minimal, pay-per-call **x402** cross-contract release gate for CI. It calls the
+live GENESIS Release Guardian API to check MCP tool contracts, common OpenAPI
+breakages, GraphQL, SDK exports, and JSON Schema changes between two versions,
+then passes or fails your workflow per a policy you configure.
 
 - **No account, no API key, no subscription.** Payment is x402: USDC on Base.
 - **You own your payment key.** GENESIS never sees your private key — only the
@@ -41,7 +41,7 @@ jobs:
           current-spec: spec/openapi.json
           mode: quick
           fail-on: breaking
-          max-spend-usd: '0.01'
+          max-spend-usd: '0.001'
           private-key: ${{ secrets.X402_PRIVATE_KEY }}
       - run: echo "verdict=${{ steps.guard.outputs.verdict }}"
 ```
@@ -52,8 +52,8 @@ jobs:
 |---|---|---|---|
 | `previous-spec` | yes | — | Baseline spec: a filesystem path to JSON, or an inline JSON string |
 | `current-spec` | yes | — | Proposed spec: a filesystem path to JSON, or an inline JSON string |
-| `mode` | no | `quick` | `quick` (0.005 USDC) or `deep` (0.019 USDC, explicit opt-in) |
-| `max-spend-usd` | no | `0.01` | Hard ceiling. The action aborts **before signing** if the live quote exceeds this |
+| `mode` | no | `quick` | `quick` (0.001 USDC) or `deep` (0.019 USDC, explicit opt-in) |
+| `max-spend-usd` | no | `0.001` | Hard ceiling. Set it to `0.019` when explicitly choosing Deep. The action aborts **before signing** if the live quote exceeds this or the published mode price |
 | `fail-on` | no | `breaking` | `breaking` (fail on BREAKING), `risky` (fail on BREAKING+RISKY), `never` |
 | `private-key` | yes | — | Your x402 EIP-3009 signing key, funded with USDC on Base. Use a GitHub Secret |
 
@@ -99,10 +99,13 @@ X402_PRIVATE_KEY = 0x… (a Base USDC-funded EIP-3009 signing key)
 
 ## Quick vs Deep
 
-- **Quick (0.005 USDC):** cheap deterministic gate for routine CI. Use it on
+- **Quick (0.001 USDC):** low-cost deterministic cross-contract gate for routine CI. Use it on
   every PR.
 - **Deep (0.019 USDC):** higher-evidence analysis. Opt in for ambiguous or
   high-risk changes where the extra evidence changes the release decision.
+
+For a no-wallet first look, use the free scope preview at
+[`/release-guardian`](https://genesis-agent-tools.genesisagenttools.workers.dev/release-guardian).
 
 ## Non-CI usage
 
